@@ -8,10 +8,14 @@ import java.time.LocalTime;
 public class User {
     @Id
     private String userId;
+    private String name;
     private String userEmail;
     private String firstName;
     private String lastName;
     private String password;
+    private String phoneNumber;
+    private String jobRole;
+    private String location; 
     private String userRole = "User";
     private LocalDate dateRegistered = LocalDate.now();
     private LocalTime timeRegistered = LocalTime.now();
@@ -79,4 +83,40 @@ public class User {
     public void setTimeRegistered(LocalTime timeRegistered) {
         this.timeRegistered = timeRegistered;
     }
+    // Getter and Setter for 'name'
+public String getName() {
+    return name;
+}
+
+public void setName(String name) {
+    this.name = name;
+}
+
+// Getter and Setter for 'phoneNumber'
+public String getPhoneNumber() {
+    return phoneNumber;
+}
+
+public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+}
+
+// Getter and Setter for 'jobRole'
+public String getJobRole() {
+    return jobRole;
+}
+
+public void setJobRole(String jobRole) {
+    this.jobRole = jobRole;
+}
+
+// Getter and Setter for 'location'
+public String getLocation() {
+    return location;
+}
+
+public void setLocation(String location) {
+    this.location = location;
+}
+
 }
