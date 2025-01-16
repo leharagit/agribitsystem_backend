@@ -14,7 +14,6 @@ public class User {
     private String lastName;
     private String password;
     private String phoneNumber;
-    private String jobRole;
     private String location; 
     private String userRole = "User";
     private LocalDate dateRegistered = LocalDate.now();
@@ -99,15 +98,6 @@ public String getPhoneNumber() {
 
 public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
-}
-
-// Getter and Setter for 'jobRole'
-public String getJobRole() {
-    return jobRole;
-}
-
-public void setJobRole(String jobRole) {
-    this.jobRole = jobRole;
 }
 
 // Getter and Setter for 'location'
