@@ -22,6 +22,8 @@ public class Product {
     private String status;  // Available, Sold, etc.
     private int productQuantity;  // Available stock
 
+    private byte[] image;  // Field to store the product image as a byte array
+
     // Getters and Setters
     public String getProductId() {
         return productId;
@@ -127,6 +129,14 @@ public class Product {
         this.productQuantity = productQuantity;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -143,6 +153,7 @@ public class Product {
                 ", size='" + size + '\'' +
                 ", status='" + status + '\'' +
                 ", productQuantity=" + productQuantity +
+                ", imageLength=" + (image != null ? image.length : 0) +
                 '}';
     }
 }

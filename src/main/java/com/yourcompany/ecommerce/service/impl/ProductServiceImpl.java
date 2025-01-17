@@ -13,7 +13,6 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-  
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -49,6 +48,7 @@ public class ProductServiceImpl implements ProductService {
             updatedProduct.setSize(product.getSize());
             updatedProduct.setStatus(product.getStatus());
             updatedProduct.setProductQuantity(product.getProductQuantity());
+            updatedProduct.setImage(product.getImage()); // Update image
             return productRepository.save(updatedProduct);
         } else {
             return null; // Or throw a custom exception for product not found
