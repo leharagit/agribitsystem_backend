@@ -53,18 +53,13 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "10000") double max,
             @RequestParam(required = false, defaultValue = "sales") String sort
     ) {
-        List<Product> products = productService.getAllProducts(min, max, sort);
-
-        // Convert image bytes to Base64 strings for retrieval
-        List<Product> productsWithEncodedImages = products.stream().map(product -> {
-            if (product.getImage() != null) {
-                product.setImage(Base64.getEncoder().encodeToString(product.getImage()).getBytes());
-            }
-            return product;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(productsWithEncodedImages);
+        return ResponseEntity.ok(productService.getAllProducts(min, max, sort));
     }
+        // Convert image bytes to Base64 strings for retrieval
+
+
+    
+    
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
