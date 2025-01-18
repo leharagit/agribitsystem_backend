@@ -52,4 +52,13 @@ public class BidController {
     public Optional<Bid> getMaxTotalAmountBid() {
         return bidService.getMaxTotalAmountBid();
     }
+
+
+
+
+    @GetMapping("/max-total/{productId}")
+    public Optional<Bid> getMaxBidByProductId(@PathVariable String productId) {
+        return bidService.getMaxBidByProductId(productId);
+    }
+    
 }

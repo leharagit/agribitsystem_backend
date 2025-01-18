@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface BidService {
     Bid createBid(Bid bid);
+    Optional<Bid> getMaxBidByProductId(String productId);
+
     Optional<Bid> getBidById(String bidId);
     List<Bid> getAllBids();
     Bid updateBid(String bidId, Bid bid);

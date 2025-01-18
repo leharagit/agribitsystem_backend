@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BidRepository extends MongoRepository<Bid, String> {
     List<Bid> findByProductId(String productId);
+    
 }

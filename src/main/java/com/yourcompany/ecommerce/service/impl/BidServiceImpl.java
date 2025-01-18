@@ -68,4 +68,13 @@ public class BidServiceImpl implements BidService {
                 .stream()
                 .max(Comparator.comparingDouble(Bid::getTotalAmount));
     }
+
+
+    @Override
+public Optional<Bid> getMaxBidByProductId(String productId) {
+    return bidRepository.findByProductId(productId)
+            .stream()
+            .max(Comparator.comparingDouble(Bid::getTotalAmount));
+}
+
 }
