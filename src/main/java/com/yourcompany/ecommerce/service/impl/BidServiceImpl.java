@@ -5,6 +5,7 @@ import com.yourcompany.ecommerce.repository.BidRepository;
 import com.yourcompany.ecommerce.service.BidService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class BidServiceImpl implements BidService {
             Bid updatedBid = existingBid.get();
             updatedBid.setBidAmount(bid.getBidAmount());
             updatedBid.setQuantity(bid.getQuantity());
-            updatedBid.setTotalAmount(bid.getBidAmount() * bid.getQuantity()); // Update totalAmount
+            updatedBid.setTotalAmount(bid.getBidAmount() * bid.getQuantity());
             return bidRepository.save(updatedBid);
         } else {
             throw new RuntimeException("Bid not found with id: " + bidId);
@@ -59,5 +60,12 @@ public class BidServiceImpl implements BidService {
     @Override
     public List<Bid> getBidsByProductId(String productId) {
         return bidRepository.findByProductId(productId);
+    }
+
+    @Override
+    public Optional<Bid> getMaxTotalAmountBid() {
+        return bidRepository.findAll()
+                .stream()
+                .max(Comparator.comparingDouble(Bid::getTotalAmount));
     }
 }

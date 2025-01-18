@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BidService {
-    Bid createBid(Bid bid); // Method to create a new bid
-    Optional<Bid> getBidById(String bidId); // Method to get a bid by ID
-    List<Bid> getAllBids(); // Method to get all bids
-    Bid updateBid(String bidId, Bid bid); // Method to update a bid
-    void deleteBid(String bidId); // Method to delete a bid
-
-
-    List<Bid> getBidsByProductId(String productId);}
+    Bid createBid(Bid bid);
+    Optional<Bid> getBidById(String bidId);
+    List<Bid> getAllBids();
+    Bid updateBid(String bidId, Bid bid);
+    void deleteBid(String bidId);
+    List<Bid> getBidsByProductId(String productId);
+    Optional<Bid> getMaxTotalAmountBid(); // Method to get max totalAmount bid
+}
