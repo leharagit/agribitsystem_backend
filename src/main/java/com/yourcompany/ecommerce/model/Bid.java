@@ -12,7 +12,8 @@ public class Bid {
     private String productId; // Foreign Key to Product
     private String userId; // Foreign Key to User (Buyer)
     private double bidAmount; // The amount the user bids
-    private double quantity; // The timestamp of the bid
+    private double quantity; // The quantity of the product bid
+    private double totalAmount; // The calculated total amount (bidAmount * quantity)
 
     // Getters and Setters
     public String getId() {
@@ -47,12 +48,20 @@ public class Bid {
         this.bidAmount = bidAmount;
     }
 
-    public double getquantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setquantity(double quantity) {
-        this.quantity =quantity;
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     @Override
@@ -62,7 +71,8 @@ public class Bid {
                 ", productId='" + productId + '\'' +
                 ", userId='" + userId + '\'' +
                 ", bidAmount=" + bidAmount +
-                ", timestamp=" + quantity +
+                ", quantity=" + quantity +
+                ", totalAmount=" + totalAmount +
                 '}';
     }
 }

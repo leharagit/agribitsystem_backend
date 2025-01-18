@@ -13,13 +13,13 @@ public class BidServiceImpl implements BidService {
 
     private final BidRepository bidRepository;
 
-    
     public BidServiceImpl(BidRepository bidRepository) {
         this.bidRepository = bidRepository;
     }
 
     @Override
     public Bid createBid(Bid bid) {
+        bid.setTotalAmount(bid.getBidAmount() * bid.getQuantity()); // Calculate totalAmount
         return bidRepository.save(bid);
     }
 
@@ -39,7 +39,8 @@ public class BidServiceImpl implements BidService {
         if (existingBid.isPresent()) {
             Bid updatedBid = existingBid.get();
             updatedBid.setBidAmount(bid.getBidAmount());
-            updatedBid.setquantity(bid.getquantity()); // Correct usage
+            updatedBid.setQuantity(bid.getQuantity());
+            updatedBid.setTotalAmount(bid.getBidAmount() * bid.getQuantity()); // Update totalAmount
             return bidRepository.save(updatedBid);
         } else {
             throw new RuntimeException("Bid not found with id: " + bidId);
@@ -59,6 +60,4 @@ public class BidServiceImpl implements BidService {
     public List<Bid> getBidsByProductId(String productId) {
         return bidRepository.findByProductId(productId);
     }
-
-
 }
