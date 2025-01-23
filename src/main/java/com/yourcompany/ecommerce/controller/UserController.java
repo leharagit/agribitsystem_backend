@@ -59,18 +59,26 @@ public class UserController {
         // Authenticate user in service
         String loginMessage = userService.login(loginRequest);
         if ("Login successful".equals(loginMessage)) {
+            // Fetch authenticated user details
             User authenticatedUser = userService.getUserByUserEmail(loginRequest.getUserEmail());
+    
             // Generate JWT token if login successful
-            String token = JwtUtil.generateToken(loginRequest.getUserEmail()); // Use userEmail for token generation
+            String token = JwtUtil.generateToken(authenticatedUser.getUserEmail()); // Use userEmail for token generation
+    
+            // Prepare the response including user details
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
-            response.put("email", loginRequest.getUserEmail());
+            response.put("email", authenticatedUser.getUserEmail());
             response.put("role", authenticatedUser.getUserRole());
+            response.put("userId", authenticatedUser.getUserId()); // Add userId to the response
+            response.put("firstName", authenticatedUser.getFirstName()); // Add first name if needed
+    
             return response;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, loginMessage);
         }
     }
+    
 
     @PostMapping("/logout")
     public String logout(HttpSession session) {
