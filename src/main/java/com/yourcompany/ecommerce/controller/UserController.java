@@ -71,7 +71,7 @@ public class UserController {
             response.put("email", authenticatedUser.getUserEmail());
             response.put("role", authenticatedUser.getUserRole());
             response.put("userId", authenticatedUser.getUserId()); // Add userId to the response
-            response.put("firstName", authenticatedUser.getFirstName()); // Add first name if needed
+            response.put("name", authenticatedUser.getName()); // Add first name if needed
     
             return response;
         } else {

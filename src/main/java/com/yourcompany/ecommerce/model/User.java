@@ -15,7 +15,7 @@ public class User {
     private String password;
     private String phoneNumber;
     private String location; 
-    private String userRole = "User";
+    private String userRole;
     private LocalDate dateRegistered = LocalDate.now();
     private LocalTime timeRegistered = LocalTime.now();
 
