@@ -11,4 +11,7 @@ public interface ProductService {
     List<Product> getAllProducts(double min, double max, String sort);
     Product updateProduct(String productId, Product product);
     void deleteProduct(String productId);
+
+    // New method for getting products by user ID
+    List<Product> getProductsByUserId(String userId);
 }

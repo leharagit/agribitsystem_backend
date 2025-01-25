@@ -30,10 +30,15 @@ public class ProductController {
             @RequestParam("product") String productJson,
             @RequestParam(value = "image", required = false) MultipartFile image
     ) throws IOException {
+        // Deserialize product JSON
         Product product = new ObjectMapper().readValue(productJson, Product.class);
+
+        // Set image if provided
         if (image != null && !image.isEmpty()) {
             product.setImage(image.getBytes());
         }
+
+        // Save the product and return the response
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.ok(createdProduct);
     }
@@ -53,11 +58,6 @@ public class ProductController {
     ) {
         return ResponseEntity.ok(productService.getAllProducts(min, max, sort));
     }
-        // Convert image bytes to Base64 strings for retrieval
-
-
-    
-    
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
@@ -78,4 +78,17 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
-}
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Product>> getProductsByUserId(@PathVariable String userId) {
+        List<Product> products = productService.getProductsByUserId(userId);
+        if (products.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(products);
+    }
+
+
+
+
+} 
