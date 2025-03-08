@@ -9,7 +9,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/bids")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app"})
+
 public class BidController {
 
     private final BidService bidService;

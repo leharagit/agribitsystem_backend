@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/notifications")
-@CrossOrigin(origins = "http://localhost:5173") // Allow requests from all origins
+@CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app"})
+// Allow requests from all origins
 public class NotificationController {
      @Autowired
     private final NotificationService notificationService;

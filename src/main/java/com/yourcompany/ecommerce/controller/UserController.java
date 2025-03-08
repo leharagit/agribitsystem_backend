@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app"})
+
 @RequestMapping("/user")
 public class UserController {
     @Autowired
