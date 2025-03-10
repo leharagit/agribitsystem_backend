@@ -67,7 +67,7 @@ public class PaymentController {
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                     .setAmount((long) (totalAmount * 100)) // Convert to cents
                     .setCurrency("usd")
-                    .setPaymentMethodTypes(List.of("card"))
+                    .addPaymentMethodType("card")
                     .build();
 
             PaymentIntent intent = PaymentIntent.create(params);

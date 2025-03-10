@@ -13,7 +13,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-   
     public PaymentServiceImpl(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
@@ -40,12 +39,11 @@ public class PaymentServiceImpl implements PaymentService {
             Payment updatedPayment = existingPayment.get();
             updatedPayment.setTotalAmount(payment.getTotalAmount());
             updatedPayment.setPaymentMethod(payment.getPaymentMethod());
-            updatedPayment.setPaymentType(payment.getPaymentType());
             updatedPayment.setPaymentStatus(payment.getPaymentStatus());
             updatedPayment.setTimestamp(payment.getTimestamp());
             return paymentRepository.save(updatedPayment);
         } else {
-            return null; // Or throw an exception for payment not found
+            throw new RuntimeException("Payment not found with id: " + paymentId);
         }
     }
 
