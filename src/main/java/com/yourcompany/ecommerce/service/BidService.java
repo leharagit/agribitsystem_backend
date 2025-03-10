@@ -15,4 +15,5 @@ public interface BidService {
     void deleteBid(String bidId);
     List<Bid> getBidsByProductId(String productId);
     Optional<Bid> getMaxTotalAmountBid(); // Method to get max totalAmount bid
+    List<Bid> getBidsByUserId(String userId);
 }
