@@ -47,7 +47,7 @@ public class User {
     private LocalDate dateRegistered = LocalDate.now();
     private LocalTime timeRegistered = LocalTime.now();
 
-    // Ensure password is NOT exposed in logs add
+    // Ensure password is NOT exposed in 
     @Override
     public String toString() {
         return "User{" +
