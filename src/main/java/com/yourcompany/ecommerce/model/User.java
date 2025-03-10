@@ -1,112 +1,66 @@
 package com.yourcompany.ecommerce.model;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.validation.constraints.*;
+import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Document(collection = "users")
+@Data // Lombok: Generates Getters, Setters, toString(), equals(), and hashCode()
+@NoArgsConstructor // Lombok: No-args constructor
+@AllArgsConstructor // Lombok: All-args constructor
 public class User {
+
     @Id
     private String userId;
+
+    @NotBlank(message = "Full Name is required")
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String userEmail;
+
+    @NotBlank(message = "First name is required")
     private String firstName;
+
+    @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\d{10,}$", message = "Phone number must be at least 10 digits")
     private String phoneNumber;
-    private String location; 
+
+    @NotBlank(message = "Location is required")
+    private String location;
+
+    @NotBlank(message = "User role is required")
+    @Pattern(regexp = "Farmer|Buyer|Admin", message = "Role must be one of: Farmer, Buyer, Admin")
     private String userRole;
+
     private LocalDate dateRegistered = LocalDate.now();
     private LocalTime timeRegistered = LocalTime.now();
 
-    public String getUserId() {
-        return userId;
+    // Ensure password is NOT exposed in logs add
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", userEmail='" + userEmail + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", location='" + location + '\'' +
+                ", userRole='" + userRole + '\'' +
+                ", dateRegistered=" + dateRegistered +
+                ", timeRegistered=" + timeRegistered +
+                '}';
     }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
-    }
-
-    public LocalDate getDateRegistered() {
-        return dateRegistered;
-    }
-
-    public void setDateRegistered(LocalDate dateRegistered) {
-        this.dateRegistered = dateRegistered;
-    }
-
-    public LocalTime getTimeRegistered() {
-        return timeRegistered;
-    }
-
-    public void setTimeRegistered(LocalTime timeRegistered) {
-        this.timeRegistered = timeRegistered;
-    }
-    // Getter and Setter for 'name'
-public String getName() {
-    return name;
-}
-
-public void setName(String name) {
-    this.name = name;
-}
-
-// Getter and Setter for 'phoneNumber'
-public String getPhoneNumber() {
-    return phoneNumber;
-}
-
-public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-}
-
-// Getter and Setter for 'location'
-public String getLocation() {
-    return location;
-}
-
-public void setLocation(String location) {
-    this.location = location;
-}
-
 }
