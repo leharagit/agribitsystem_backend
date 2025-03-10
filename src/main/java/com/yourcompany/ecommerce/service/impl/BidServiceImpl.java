@@ -66,6 +66,12 @@ public class BidServiceImpl implements BidService {
                 .max(Comparator.comparingDouble(Bid::getTotalAmount));
     }
 
+    // ✅ New method to fetch bids by user ID
+    @Override
+    public List<Bid> getBidsByUserId(String userId) {
+        return bidRepository.findByUserId(userId);
+    }
+
     @Override
     public Bid updateBid(String bidId, Bid bid) {
         Optional<Bid> existingBid = bidRepository.findById(bidId);
