@@ -9,17 +9,19 @@ public class Bid {
     @Id
     private String id;
     private String productId;
+    private String productName; // ✅ New field for product name
     private String userId;
-    private String phoneNumber; // New field for phone number
+    private String phoneNumber;
     private double bidAmount;
     private double quantity;
     private double totalAmount;
 
-    // Constructors
+    // ✅ Constructors
     public Bid() {}
 
-    public Bid(String productId, String userId, String phoneNumber, double bidAmount, double quantity) {
+    public Bid(String productId, String productName, String userId, String phoneNumber, double bidAmount, double quantity) {
         this.productId = productId;
+        this.productName = productName;
         this.userId = userId;
         this.phoneNumber = phoneNumber;
         this.bidAmount = bidAmount;
@@ -27,12 +29,15 @@ public class Bid {
         this.totalAmount = bidAmount * quantity;
     }
 
-    // Getters & Setters
+    // ✅ Getters & Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
     public String getProductId() { return productId; }
     public void setProductId(String productId) { this.productId = productId; }
+
+    public String getProductName() { return productName; } // ✅ Getter for product name
+    public void setProductName(String productName) { this.productName = productName; } // ✅ Setter for product name
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -54,6 +59,7 @@ public class Bid {
         return "Bid{" +
                 "id='" + id + '\'' +
                 ", productId='" + productId + '\'' +
+                ", productName='" + productName + '\'' + // ✅ Include product name
                 ", userId='" + userId + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", bidAmount=" + bidAmount +
