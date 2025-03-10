@@ -1,4 +1,4 @@
-# Online Agricultural Product Auction Platform
+# Online Agricultural Product Auction  Platform
 # E-commerce Backend API
 
 This repository contains the backend implementation of an e-commerce platform using Spring Boot. The API provides endpoints for managing bids, deliveries, products, and users, with a focus on secure, efficient, and scalable operations.
