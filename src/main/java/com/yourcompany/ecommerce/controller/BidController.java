@@ -10,7 +10,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/bids")
 @CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app"})
-
 public class BidController {
 
     private final BidService bidService;
@@ -29,6 +28,7 @@ public class BidController {
         return bidService.getBidById(id);
     }
 
+    // ✅ Fetch all bids (ENSURE `productName` and `createdAt` are returned)
     @GetMapping
     public List<Bid> getAllBids() {
         return bidService.getAllBids();
@@ -54,12 +54,8 @@ public class BidController {
         return bidService.getMaxTotalAmountBid();
     }
 
-
-
-
     @GetMapping("/max-total/{productId}")
     public Optional<Bid> getMaxBidByProductId(@PathVariable String productId) {
         return bidService.getMaxBidByProductId(productId);
     }
-    
 }
