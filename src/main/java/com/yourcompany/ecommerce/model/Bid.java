@@ -15,6 +15,18 @@ public class Bid {
     private double quantity;
     private double totalAmount;
 
+    // Constructors
+    public Bid() {}
+
+    public Bid(String productId, String userId, String phoneNumber, double bidAmount, double quantity) {
+        this.productId = productId;
+        this.userId = userId;
+        this.phoneNumber = phoneNumber;
+        this.bidAmount = bidAmount;
+        this.quantity = quantity;
+        this.totalAmount = bidAmount * quantity;
+    }
+
     // Getters & Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -50,4 +62,5 @@ public class Bid {
                 '}';
     }
 }
+
 
