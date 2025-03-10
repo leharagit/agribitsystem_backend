@@ -58,4 +58,10 @@ public class BidController {
     public Optional<Bid> getMaxBidByProductId(@PathVariable String productId) {
         return bidService.getMaxBidByProductId(productId);
     }
+
+    // ✅ New endpoint to fetch bids by User ID
+    @GetMapping("/user/{userId}")
+    public List<Bid> getBidsByUserId(@PathVariable String userId) {
+        return bidService.getBidsByUserId(userId);
+    }
 }
