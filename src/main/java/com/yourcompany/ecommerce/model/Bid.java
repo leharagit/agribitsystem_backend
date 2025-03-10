@@ -10,57 +10,32 @@ public class Bid {
     private String id;
     private String productId;
     private String userId;
+    private String phoneNumber; // New field for phone number
     private double bidAmount;
     private double quantity;
     private double totalAmount;
 
-    public String getId() {
-        return id;
-    }
+    // Getters & Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getProductId() { return productId; }
+    public void setProductId(String productId) { this.productId = productId; }
 
-    public String getProductId() {
-        return productId;
-    }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    public String getUserId() {
-        return userId;
-    }
+    public double getBidAmount() { return bidAmount; }
+    public void setBidAmount(double bidAmount) { this.bidAmount = bidAmount; }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public double getQuantity() { return quantity; }
+    public void setQuantity(double quantity) { this.quantity = quantity; }
 
-    public double getBidAmount() {
-        return bidAmount;
-    }
-
-    public void setBidAmount(double bidAmount) {
-        this.bidAmount = bidAmount;
-    }
-
-    public double getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(double quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
-    }
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
 
     @Override
     public String toString() {
@@ -68,6 +43,7 @@ public class Bid {
                 "id='" + id + '\'' +
                 ", productId='" + productId + '\'' +
                 ", userId='" + userId + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", bidAmount=" + bidAmount +
                 ", quantity=" + quantity +
                 ", totalAmount=" + totalAmount +
