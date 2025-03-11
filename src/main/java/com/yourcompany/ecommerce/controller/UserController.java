@@ -1,160 +1,122 @@
 package com.yourcompany.ecommerce.controller;
-
 import com.yourcompany.ecommerce.model.User;
 import com.yourcompany.ecommerce.service.UserService;
 import com.yourcompany.ecommerce.Util.JwtUtil;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app", "http://localhost:5175"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app"})
+
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
+    @Qualifier("userServiceImpl")
     private UserService userService;
-
-    // Create a new user with validation
+    
+    // Create a new user
     @PostMapping("/addUser")
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
-        try {
-            User createdUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating user: " + e.getMessage());
-        }
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
+        return ResponseEntity.ok(createdUser);
     }
-
     // Get user by ID
     @GetMapping("/getUserById/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable("id") String userId) {
-        try {
-            User user = userService.getUserById(userId);
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+    public ResponseEntity<User> getUserById(@PathVariable("id") String userId) {
+        User user = userService.getUserById(userId);
+        return ResponseEntity.ok(user);
     }
-
-    // Get user name by ID
     @GetMapping("/getUserNameByID/{id}")
-    public ResponseEntity<?> getUsernameById(@PathVariable("id") String userId) {
-        try {
-            User user = userService.getUserNameById(userId);
-            return ResponseEntity.ok(user.getFirstName());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+    public String getUsernameById(@PathVariable("id") String userId) {
+        User user = userService.getUserNameById(userId);
+        String userName=user.getFirstName();
+        return userName;
     }
-
-    // Get user by email
-    @GetMapping("/getUserByEmail/{email}")
-    public ResponseEntity<?> getUserByEmail(@PathVariable("email") String userEmail) {
-        try {
-            User user = userService.getUserByUserEmail(userEmail);
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+    @GetMapping("/getUserByEmail/{id}")
+    public User getUserByEmail(@PathVariable("id") String userEmail) {
+        return userService.getUserByUserEmail(userEmail);
     }
-
     // Get all users
     @GetMapping("/allUsers")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
-
     // Delete user by ID
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") String userId) {
-        try {
-            userService.deleteUser(userId);
-            return ResponseEntity.ok("User with ID " + userId + " has been deleted successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("User with ID " + userId + " has been deleted successfully.");
     }
-
-    // User login
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody User loginRequest) {
+    public Map<String, String> login(@RequestBody User loginRequest) {
+        // Authenticate user in service
         String loginMessage = userService.login(loginRequest);
         if ("Login successful".equals(loginMessage)) {
+            // Fetch authenticated user details
             User authenticatedUser = userService.getUserByUserEmail(loginRequest.getUserEmail());
-            String token = JwtUtil.generateToken(authenticatedUser.getUserEmail());
-
+    
+            // Generate JWT token if login successful
+            String token = JwtUtil.generateToken(authenticatedUser.getUserEmail()); // Use userEmail for token generation
+    
+            // Prepare the response including user details
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
             response.put("email", authenticatedUser.getUserEmail());
             response.put("role", authenticatedUser.getUserRole());
-            response.put("userId", authenticatedUser.getUserId());
-            response.put("name", authenticatedUser.getName());
-
-            return ResponseEntity.ok(response);
+            response.put("userId", authenticatedUser.getUserId()); // Add userId to the response
+            response.put("name", authenticatedUser.getName()); // Add first name if needed
+    
+            return response;
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, loginMessage);
         }
     }
+    
 
-    // Logout user
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpSession session) {
-        return ResponseEntity.ok(userService.logout(session));
+    public String logout(HttpSession session) {
+        return userService.logout(session);
     }
-
-    // Register user
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody User user) {
-        try {
-            return ResponseEntity.ok(userService.register(user));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed: " + e.getMessage());
-        }
+    public String register(@RequestBody User user) {
+        return userService.register(user);
     }
-
-    // Send recovery code
     @PostMapping("/send-code")
-    public ResponseEntity<?> sendRecoveryCode(@RequestBody Map<String, String> payload) {
+    public String sendRecoveryCode(@RequestBody Map<String, String> payload) {
         String userEmail = payload.get("userEmail");
         if (userEmail == null || userEmail.isBlank()) {
-            return ResponseEntity.badRequest().body("Email cannot be empty.");
+            throw new RuntimeException("Email cannot be empty.");
         }
-        return ResponseEntity.ok(userService.sendRecoveryCode(userEmail));
+        return userService.sendRecoveryCode(userEmail);
     }
-
-    // Verify recovery code
     @PostMapping("/verify-code")
-    public ResponseEntity<Boolean> verifyRecoveryCode(@RequestParam String userEmail, @RequestParam String recoveryCode) {
-        return ResponseEntity.ok(userService.verifyRecoveryCode(userEmail, recoveryCode));
+    public boolean verifyRecoveryCode(@RequestParam String userEmail, @RequestParam String recoveryCode) {
+        return userService.verifyRecoveryCode(userEmail, recoveryCode);
     }
-
-    // Update password
     @PostMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@RequestParam String userEmail, @RequestParam String newPassword) {
-        try {
-            return ResponseEntity.ok(userService.updatePassword(userEmail, newPassword));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating password: " + e.getMessage());
-        }
+    public User updatePassword(@RequestParam String userEmail, @RequestParam String newPassword) {
+        return userService.updatePassword(userEmail, newPassword);
     }
-
-    // Update user details
     @PutMapping("/updateUser/{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable("userId") String userId, @Valid @RequestBody User user) {
+    public ResponseEntity<User> updateUser(
+            @PathVariable("userId") String userId,
+            @RequestBody User user) {
+
         try {
             User updatedUser = userService.updateUser(userId, user);
-            return ResponseEntity.ok(updatedUser);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            // Log the exception (optional)
+            System.err.println("Error updating user: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
