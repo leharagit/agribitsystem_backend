@@ -31,10 +31,11 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getAllProducts(double minBidPrice, double maxBidPrice, String sort) {
         List<Product> products = productRepository.findByStartBidPriceBetween(minBidPrice, maxBidPrice);
 
+        // Sorting logic
         if ("createdAt".equals(sort)) {
-            products.sort((p1, p2) -> p2.getProductId().compareTo(p1.getProductId())); // Sort by newest
+            products.sort((p1, p2) -> p2.getProductId().compareTo(p1.getProductId()));
         } else if ("sales".equals(sort)) {
-            products.sort((p1, p2) -> Integer.compare(p2.getProductQuantity(), p1.getProductQuantity())); // Sort by sales
+            products.sort((p1, p2) -> Integer.compare(p2.getProductQuantity(), p1.getProductQuantity()));
         }
 
         return products;
@@ -49,11 +50,22 @@ public class ProductServiceImpl implements ProductService {
     public Product updateProduct(String productId, Product product) {
         return productRepository.findById(productId)
                 .map(existingProduct -> {
+                    // ✅ Update only fields that are not null or zero
                     existingProduct.setName(product.getName() != null ? product.getName() : existingProduct.getName());
                     existingProduct.setCategory(product.getCategory() != null ? product.getCategory() : existingProduct.getCategory());
                     existingProduct.setDescription(product.getDescription() != null ? product.getDescription() : existingProduct.getDescription());
+                    existingProduct.setQuantity(product.getQuantity() != 0 ? product.getQuantity() : existingProduct.getQuantity());
+                    existingProduct.setQuality(product.getQuality() != null ? product.getQuality() : existingProduct.getQuality());
+                    existingProduct.setLocation(product.getLocation() != null ? product.getLocation() : existingProduct.getLocation());
                     existingProduct.setStartBidPrice(product.getStartBidPrice() != 0 ? product.getStartBidPrice() : existingProduct.getStartBidPrice());
                     existingProduct.setBuyNowPrice(product.getBuyNowPrice() != 0 ? product.getBuyNowPrice() : existingProduct.getBuyNowPrice());
+                    existingProduct.setSize(product.getSize() != null ? product.getSize() : existingProduct.getSize());
+                    existingProduct.setStatus(product.getStatus() != null ? product.getStatus() : existingProduct.getStatus());
+                    existingProduct.setProductQuantity(product.getProductQuantity() != 0 ? product.getProductQuantity() : existingProduct.getProductQuantity());
+                    
+                    // ✅ Keep the existing image if no new image is provided
+                    existingProduct.setImage(product.getImage() != null ? product.getImage() : existingProduct.getImage());
+
                     return productRepository.save(existingProduct);
                 })
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
@@ -67,3 +79,4 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(productId);
     }
 }
+
