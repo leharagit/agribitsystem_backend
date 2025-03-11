@@ -13,7 +13,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-   
     public TransactionServiceImpl(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
@@ -34,6 +33,16 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public List<Transaction> getTransactionsByBuyerId(String buyerId) {
+        return transactionRepository.findByBuyerId(buyerId);
+    }
+
+    @Override
+    public List<Transaction> getTransactionsBySellerId(String sellerId) {
+        return transactionRepository.findBySellerId(sellerId);
+    }
+
+    @Override
     public Transaction updateTransaction(String transactionId, Transaction transaction) {
         Optional<Transaction> existingTransaction = transactionRepository.findById(transactionId);
         if (existingTransaction.isPresent()) {
@@ -41,9 +50,15 @@ public class TransactionServiceImpl implements TransactionService {
             updatedTransaction.setPaymentStatus(transaction.getPaymentStatus());
             updatedTransaction.setDeliveryStatus(transaction.getDeliveryStatus());
             updatedTransaction.setDate(transaction.getDate());
+
+            // ✅ Update Bank Details
+            updatedTransaction.setBankName(transaction.getBankName());
+            updatedTransaction.setAccountNumber(transaction.getAccountNumber());
+            updatedTransaction.setBranch(transaction.getBranch());
+
             return transactionRepository.save(updatedTransaction);
         } else {
-            return null; // Or throw an exception
+            throw new RuntimeException("Transaction not found with id: " + transactionId);
         }
     }
 

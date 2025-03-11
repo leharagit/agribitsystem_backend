@@ -77,12 +77,21 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ Fetch all products added by a specific user
+ 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Product>> getProductsByUserId(@PathVariable String userId) {
-        List<Product> products = productService.getProductsByCategory(userId);
+        List<Product> products = productService.getProductsByUserId(userId);
+        if (products.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(products);
     }
+
+
+
+
+
+
 
     // ✅ Fetch products by category
     @GetMapping("/category/{category}")
@@ -98,4 +107,6 @@ public class ProductController {
         productService.exportProductsToCSV(writer);
     }
 }
+
+
 

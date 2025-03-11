@@ -8,6 +8,7 @@ import java.util.List;
 public interface ProductRepository extends MongoRepository<Product, String> {
 
     List<Product> findByUserId(String userId);
+   
 
     // ✅ Find products within a bid price range
     @Query("{ 'startBidPrice': { $gte: ?0, $lte: ?1 } }")

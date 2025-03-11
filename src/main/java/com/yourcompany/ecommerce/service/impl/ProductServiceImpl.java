@@ -56,6 +56,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getProductsByUserId(String userId) {
+        // Fetch products by userId
+        return productRepository.findByUserId(userId);
+    }
+
+    @Override
     public Product updateProduct(String productId, String productJson, MultipartFile image) throws IOException {
         Optional<Product> existingProductOpt = productRepository.findById(productId);
 
