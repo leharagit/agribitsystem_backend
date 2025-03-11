@@ -28,24 +28,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts(double min, double max, String sort) {
-        // Add logic for filtering and sorting products (if required).
-        // For now, it returns all products.
-        return productRepository.findAll();
+    public List<Product> getAllProducts(double startBidPrice, String sort) {
+        // Fetch products based on minimum startBidPrice
+        List<Product> products = productRepository.findByStartBidPriceGreaterThanEqual(startBidPrice);
+
+        // Sorting Logic (Best Selling or Newest)
+        if ("createdAt".equals(sort)) {
+            products.sort((p1, p2) -> p2.getProductId().compareTo(p1.getProductId())); // Sort by newest
+        } else if ("sales".equals(sort)) {
+            products.sort((p1, p2) -> Integer.compare(p2.getProductQuantity(), p1.getProductQuantity())); // Sort by sales
+        }
+
+        return products;
     }
 
     @Override
-public List<Product> getProductsByUserId(String userId) {
-    // Fetch products by userId
-    return productRepository.findByUserId(userId);
-}
-
+    public List<Product> getProductsByUserId(String userId) {
+        return productRepository.findByUserId(userId);
+    }
 
     @Override
     public Product updateProduct(String productId, Product product) {
         return productRepository.findById(productId)
                 .map(existingProduct -> {
-                    // Update fields selectively (if the field in the new product is null, retain the old value)
                     existingProduct.setName(product.getName() != null ? product.getName() : existingProduct.getName());
                     existingProduct.setCategory(product.getCategory() != null ? product.getCategory() : existingProduct.getCategory());
                     existingProduct.setDescription(product.getDescription() != null ? product.getDescription() : existingProduct.getDescription());
@@ -70,6 +75,5 @@ public List<Product> getProductsByUserId(String userId) {
         }
         productRepository.deleteById(productId);
     }
-
-  
 }
+
