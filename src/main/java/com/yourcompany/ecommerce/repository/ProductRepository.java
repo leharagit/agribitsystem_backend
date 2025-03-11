@@ -9,7 +9,7 @@ import java.util.List;
 public interface ProductRepository extends MongoRepository<Product, String> {
     List<Product> findByUserId(String userId);
 
-    // ✅ Fetch products where startBidPrice >= given value
-    @Query("{ 'startBidPrice': { $gte: ?0 } }")
-    List<Product> findByStartBidPriceGreaterThanEqual(double startBidPrice);
+    // ✅ Fetch products where startBidPrice is between min & max
+    @Query("{ 'startBidPrice': { $gte: ?0, $lte: ?1 } }")
+    List<Product> findByStartBidPriceBetween(double minBidPrice, double maxBidPrice);
 }

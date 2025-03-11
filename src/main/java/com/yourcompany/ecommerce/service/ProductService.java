@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ProductService {
     Product createProduct(Product product);
     Optional<Product> getProductById(String productId);
-    List<Product> getAllProducts(double startBidPrice, String sort);
+    List<Product> getAllProducts(double minBidPrice, double maxBidPrice, String sort);
     Product updateProduct(String productId, Product product);
     void deleteProduct(String productId);
     List<Product> getProductsByUserId(String userId);

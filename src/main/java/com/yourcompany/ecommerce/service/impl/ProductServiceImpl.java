@@ -28,9 +28,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts(double startBidPrice, String sort) {
-        // Fetch products based on minimum startBidPrice
-        List<Product> products = productRepository.findByStartBidPriceGreaterThanEqual(startBidPrice);
+    public List<Product> getAllProducts(double minBidPrice, double maxBidPrice, String sort) {
+        // Fetch products based on min & max bid price
+        List<Product> products = productRepository.findByStartBidPriceBetween(minBidPrice, maxBidPrice);
 
         // Sorting Logic (Best Selling or Newest)
         if ("createdAt".equals(sort)) {

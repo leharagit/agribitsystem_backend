@@ -16,7 +16,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = {"http://localhost:5173", "https://officialagribit.netlify.app"})
-
 public class ProductController {
 
     @Autowired
@@ -26,20 +25,24 @@ public class ProductController {
         this.productService = productService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts(
+            @RequestParam(required = false, defaultValue = "0") double startBidPrice,
+            @RequestParam(required = false, defaultValue = "100000") double maxBidPrice,
+            @RequestParam(required = false, defaultValue = "sales") String sort
+    ) {
+        return ResponseEntity.ok(productService.getAllProducts(startBidPrice, maxBidPrice, sort));
+    }
+
     @PostMapping
     public ResponseEntity<Product> createProduct(
             @RequestParam("product") String productJson,
             @RequestParam(value = "image", required = false) MultipartFile image
     ) throws IOException {
-        // Deserialize product JSON
         Product product = new ObjectMapper().readValue(productJson, Product.class);
-
-        // Set image if provided
         if (image != null && !image.isEmpty()) {
             product.setImage(image.getBytes());
         }
-
-        // Save the product and return the response
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.ok(createdProduct);
     }
@@ -47,17 +50,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         Optional<Product> product = productService.getProductById(id);
-        return product.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts(
-            @RequestParam(required = false, defaultValue = "0") double min,
-            @RequestParam(required = false, defaultValue = "10000") double max,
-            @RequestParam(required = false, defaultValue = "sales") String sort
-    ) {
-        return ResponseEntity.ok(productService.getAllProducts(min, max, sort));
+        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
@@ -79,17 +72,4 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Product>> getProductsByUserId(@PathVariable String userId) {
-        List<Product> products = productService.getProductsByUserId(userId);
-        if (products.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(products);
-    }
-
-
-
-
-} 
+}
