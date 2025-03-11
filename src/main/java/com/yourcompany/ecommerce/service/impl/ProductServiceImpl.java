@@ -29,10 +29,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getAllProducts(double minBidPrice, double maxBidPrice, String sort) {
-        // Fetch products based on min & max bid price
         List<Product> products = productRepository.findByStartBidPriceBetween(minBidPrice, maxBidPrice);
 
-        // Sorting Logic (Best Selling or Newest)
         if ("createdAt".equals(sort)) {
             products.sort((p1, p2) -> p2.getProductId().compareTo(p1.getProductId())); // Sort by newest
         } else if ("sales".equals(sort)) {
@@ -54,15 +52,8 @@ public class ProductServiceImpl implements ProductService {
                     existingProduct.setName(product.getName() != null ? product.getName() : existingProduct.getName());
                     existingProduct.setCategory(product.getCategory() != null ? product.getCategory() : existingProduct.getCategory());
                     existingProduct.setDescription(product.getDescription() != null ? product.getDescription() : existingProduct.getDescription());
-                    existingProduct.setQuantity(product.getQuantity() != 0 ? product.getQuantity() : existingProduct.getQuantity());
-                    existingProduct.setQuality(product.getQuality() != null ? product.getQuality() : existingProduct.getQuality());
-                    existingProduct.setLocation(product.getLocation() != null ? product.getLocation() : existingProduct.getLocation());
                     existingProduct.setStartBidPrice(product.getStartBidPrice() != 0 ? product.getStartBidPrice() : existingProduct.getStartBidPrice());
                     existingProduct.setBuyNowPrice(product.getBuyNowPrice() != 0 ? product.getBuyNowPrice() : existingProduct.getBuyNowPrice());
-                    existingProduct.setSize(product.getSize() != null ? product.getSize() : existingProduct.getSize());
-                    existingProduct.setStatus(product.getStatus() != null ? product.getStatus() : existingProduct.getStatus());
-                    existingProduct.setProductQuantity(product.getProductQuantity() != 0 ? product.getProductQuantity() : existingProduct.getProductQuantity());
-                    existingProduct.setImage(product.getImage() != null ? product.getImage() : existingProduct.getImage());
                     return productRepository.save(existingProduct);
                 })
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
@@ -76,4 +67,3 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(productId);
     }
 }
-

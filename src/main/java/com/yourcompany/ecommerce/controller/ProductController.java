@@ -53,6 +53,19 @@ public class ProductController {
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Product>> getProductsByUserId(@PathVariable String userId) {
+        System.out.println("Fetching products for user ID: " + userId); // Debug log
+        List<Product> products = productService.getProductsByUserId(userId);
+
+        if (products.isEmpty()) {
+            System.out.println("No products found for user ID: " + userId); // Debug log
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(products);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable String id,
