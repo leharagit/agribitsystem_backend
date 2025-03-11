@@ -1,10 +1,14 @@
 package com.yourcompany.ecommerce.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yourcompany.ecommerce.model.Product;
 import com.yourcompany.ecommerce.repository.ProductRepository;
 import com.yourcompany.ecommerce.service.ProductService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,55 +32,70 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts(double minBidPrice, double maxBidPrice, String sort) {
+    public List<Product> getAllProducts(double minBidPrice, double maxBidPrice, String category, String sort, int page, int limit) {
         List<Product> products = productRepository.findByStartBidPriceBetween(minBidPrice, maxBidPrice);
 
-        // Sorting logic
+        if (!category.isEmpty()) {
+            products.removeIf(product -> !product.getCategory().equalsIgnoreCase(category));
+        }
+
         if ("createdAt".equals(sort)) {
             products.sort((p1, p2) -> p2.getProductId().compareTo(p1.getProductId()));
         } else if ("sales".equals(sort)) {
             products.sort((p1, p2) -> Integer.compare(p2.getProductQuantity(), p1.getProductQuantity()));
         }
 
-        return products;
+        int fromIndex = (page - 1) * limit;
+        int toIndex = Math.min(fromIndex + limit, products.size());
+        return products.subList(fromIndex, toIndex);
     }
 
     @Override
-    public List<Product> getProductsByUserId(String userId) {
-        return productRepository.findByUserId(userId);
+    public List<Product> getProductsByCategory(String category) {
+        return productRepository.findByCategory(category);
     }
 
     @Override
-    public Product updateProduct(String productId, Product product) {
-        return productRepository.findById(productId)
-                .map(existingProduct -> {
-                    // ✅ Update only fields that are not null or zero
-                    existingProduct.setName(product.getName() != null ? product.getName() : existingProduct.getName());
-                    existingProduct.setCategory(product.getCategory() != null ? product.getCategory() : existingProduct.getCategory());
-                    existingProduct.setDescription(product.getDescription() != null ? product.getDescription() : existingProduct.getDescription());
-                    existingProduct.setQuantity(product.getQuantity() != 0 ? product.getQuantity() : existingProduct.getQuantity());
-                    existingProduct.setQuality(product.getQuality() != null ? product.getQuality() : existingProduct.getQuality());
-                    existingProduct.setLocation(product.getLocation() != null ? product.getLocation() : existingProduct.getLocation());
-                    existingProduct.setStartBidPrice(product.getStartBidPrice() != 0 ? product.getStartBidPrice() : existingProduct.getStartBidPrice());
-                    existingProduct.setBuyNowPrice(product.getBuyNowPrice() != 0 ? product.getBuyNowPrice() : existingProduct.getBuyNowPrice());
-                    existingProduct.setSize(product.getSize() != null ? product.getSize() : existingProduct.getSize());
-                    existingProduct.setStatus(product.getStatus() != null ? product.getStatus() : existingProduct.getStatus());
-                    existingProduct.setProductQuantity(product.getProductQuantity() != 0 ? product.getProductQuantity() : existingProduct.getProductQuantity());
-                    
-                    // ✅ Keep the existing image if no new image is provided
-                    existingProduct.setImage(product.getImage() != null ? product.getImage() : existingProduct.getImage());
+    public Product updateProduct(String productId, String productJson, MultipartFile image) throws IOException {
+        Optional<Product> existingProductOpt = productRepository.findById(productId);
 
-                    return productRepository.save(existingProduct);
-                })
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+        if (existingProductOpt.isEmpty()) {
+            throw new RuntimeException("Product not found with id: " + productId);
+        }
+
+        Product existingProduct = existingProductOpt.get();
+        Product updatedProductData = new ObjectMapper().readValue(productJson, Product.class);
+
+        if (updatedProductData.getName() != null) {
+            existingProduct.setName(updatedProductData.getName());
+        }
+        if (updatedProductData.getCategory() != null) {
+            existingProduct.setCategory(updatedProductData.getCategory());
+        }
+        if (updatedProductData.getBuyNowPrice() > 0) {
+            existingProduct.setBuyNowPrice(updatedProductData.getBuyNowPrice());
+        }
+        if (updatedProductData.getDescription() != null) {
+            existingProduct.setDescription(updatedProductData.getDescription());
+        }
+        if (image != null && !image.isEmpty()) {
+            existingProduct.setImage(image.getBytes());
+        }
+
+        return productRepository.save(existingProduct);
     }
 
     @Override
     public void deleteProduct(String productId) {
-        if (!productRepository.existsById(productId)) {
-            throw new RuntimeException("Product not found with id: " + productId);
-        }
         productRepository.deleteById(productId);
     }
-}
 
+    @Override
+    public void exportProductsToCSV(PrintWriter writer) {
+        List<Product> products = productRepository.findAll();
+        for (Product product : products) {
+            writer.write(product.getProductId() + "," + product.getName() + "," + product.getCategory() + "," +
+                    product.getStartBidPrice() + "," + product.getBuyNowPrice() + "," + product.getStatus() + "\n");
+        }
+    }
+}

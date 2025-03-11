@@ -3,13 +3,13 @@ package com.yourcompany.ecommerce.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yourcompany.ecommerce.model.Product;
 import com.yourcompany.ecommerce.service.ProductService;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,14 +25,17 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // ✅ Fetch all products with optional filtering
+    // ✅ Fetch all products with optional filters
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(
             @RequestParam(required = false, defaultValue = "0") double startBidPrice,
             @RequestParam(required = false, defaultValue = "100000") double maxBidPrice,
-            @RequestParam(required = false, defaultValue = "sales") String sort
+            @RequestParam(required = false, defaultValue = "") String category,
+            @RequestParam(required = false, defaultValue = "sales") String sort,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "10") int limit
     ) {
-        return ResponseEntity.ok(productService.getAllProducts(startBidPrice, maxBidPrice, sort));
+        return ResponseEntity.ok(productService.getAllProducts(startBidPrice, maxBidPrice, category, sort, page, limit));
     }
 
     // ✅ Fetch a product by ID
@@ -63,39 +66,7 @@ public class ProductController {
             @RequestParam(value = "product", required = false) String productJson,
             @RequestParam(value = "image", required = false) MultipartFile image
     ) throws IOException {
-        Optional<Product> existingProductOpt = productService.getProductById(id);
-
-        if (existingProductOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Product existingProduct = existingProductOpt.get();
-
-        if (productJson != null) {
-            Product updatedProductData = new ObjectMapper().readValue(productJson, Product.class);
-
-            // ✅ Update only non-null or non-default fields
-            if (updatedProductData.getName() != null) {
-                existingProduct.setName(updatedProductData.getName());
-            }
-            if (updatedProductData.getBuyNowPrice() > 0) { // Assuming price cannot be zero or negative
-                existingProduct.setBuyNowPrice(updatedProductData.getBuyNowPrice());
-            }
-            if (updatedProductData.getCategory() != null) {
-                existingProduct.setCategory(updatedProductData.getCategory());
-            }
-            if (updatedProductData.getDescription() != null) {
-                existingProduct.setDescription(updatedProductData.getDescription());
-            }
-            // Add other fields as needed...
-        }
-
-        // ✅ Update image only if a new image is uploaded
-        if (image != null && !image.isEmpty()) {
-            existingProduct.setImage(image.getBytes());
-        }
-
-        Product updatedProduct = productService.updateProduct(id, existingProduct);
+        Product updatedProduct = productService.updateProduct(id, productJson, image);
         return ResponseEntity.ok(updatedProduct);
     }
 
@@ -109,8 +80,22 @@ public class ProductController {
     // ✅ Fetch all products added by a specific user
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Product>> getProductsByUserId(@PathVariable String userId) {
-        List<Product> products = productService.getProductsByUserId(userId);
+        List<Product> products = productService.getProductsByCategory(userId);
         return ResponseEntity.ok(products);
+    }
+
+    // ✅ Fetch products by category
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String category) {
+        List<Product> products = productService.getProductsByCategory(category);
+        return ResponseEntity.ok(products);
+    }
+
+    // ✅ Export products to CSV
+    @GetMapping("/export/csv")
+    public void exportProductsToCSV(PrintWriter writer) {
+        writer.write("Product ID,Name,Category,Start Bid Price,Buy Now Price,Status\n");
+        productService.exportProductsToCSV(writer);
     }
 }
 
