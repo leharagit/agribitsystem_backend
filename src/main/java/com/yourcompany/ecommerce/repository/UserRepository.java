@@ -10,3 +10,4 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query("SELECT u.username FROM User u WHERE u.id = :userId")
     Optional<User> findUsernameByUserId(String userId);
 }
+
